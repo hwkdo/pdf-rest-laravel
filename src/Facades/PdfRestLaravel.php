@@ -1,16 +1,16 @@
 <?php
 
-namespace Hwkdo\BueLaravel\Facades;
+namespace Hwkdo\PdfRestLaravel\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @see \Hwkdo\BueLaravel\BueLaravel
+    * @see \Hwkdo\PdfRestLaravel\PdfRestLaravel
  */
-class BueLaravel extends Facade
+class PdfRestLaravel extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return \Hwkdo\BueLaravel\BueLaravel::class;
+        return \Hwkdo\PdfRestLaravel\PdfRestLaravel::class;
     }
 }

@@ -38,7 +38,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Hwkdo\\PdfRestLaravel\\Tests\\": "tests/",
+            "Hwkdo\\PdfRestLaravel\\Tests\\": "tests/"
         }
     },
     "scripts": {

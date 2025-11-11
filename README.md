@@ -5,56 +5,103 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/hwkdo/pdf-rest-laravel/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/hwkdo/pdf-rest-laravel/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/hwkdo/pdf-rest-laravel.svg?style=flat-square)](https://packagist.org/packages/hwkdo/pdf-rest-laravel)
 
-This is where your description should go. Limit it to a paragraph or two. Consider adding a small example.
-
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/pdf-rest-laravel.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/pdf-rest-laravel)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+Ein Laravel-Package zur Integration mit der PDF REST API. Konvertieren Sie Dokumente verschiedenster Formate einfach in PDF-Dateien.
 
 ## Installation
 
-You can install the package via composer:
+Sie können das Package via Composer installieren:
 
 ```bash
 composer require hwkdo/pdf-rest-laravel
 ```
 
-You can publish and run the migrations with:
+## Konfiguration
 
-```bash
-php artisan vendor:publish --tag="pdf-rest-laravel-migrations"
-php artisan migrate
-```
-
-You can publish the config file with:
+Sie können die Konfigurationsdatei veröffentlichen mit:
 
 ```bash
 php artisan vendor:publish --tag="pdf-rest-laravel-config"
 ```
 
-This is the contents of the published config file:
+Inhalt der Konfigurationsdatei:
 
 ```php
 return [
+    'api_key' => env('PDF_REST_API_KEY'),
+    'api_url' => env('PDF_REST_API_URL', 'https://eu-api.pdfrest.com/'),
 ];
 ```
 
-Optionally, you can publish the views using
+Fügen Sie Ihren API-Key zu Ihrer `.env` Datei hinzu:
 
-```bash
-php artisan vendor:publish --tag="pdf-rest-laravel-views"
+```env
+PDF_REST_API_KEY=your-api-key-here
+PDF_REST_API_URL=https://eu-api.pdfrest.com/
 ```
 
-## Usage
+## Verwendung
+
+### Datei zu PDF konvertieren und URL erhalten
+
+Konvertieren Sie eine Datei zu PDF und erhalten Sie die URL der konvertierten Datei:
 
 ```php
-$pdfRestLaravel = new Hwkdo\PdfRestLaravel();
-echo $pdfRestLaravel->echoPhrase('Hello, Hwkdo!');
+use Hwkdo\PdfRestLaravel\Facades\PdfRestLaravel;
+
+$url = PdfRestLaravel::convertToPdf('/path/to/document.docx');
+// Gibt zurück: "https://eu-api.pdfrest.com/output/abc123.pdf"
 ```
+
+### Datei zu PDF konvertieren und lokal speichern
+
+#### Im gleichen Verzeichnis wie die Originaldatei speichern
+
+```php
+use Hwkdo\PdfRestLaravel\Facades\PdfRestLaravel;
+
+$path = PdfRestLaravel::convertToPdfAndSave('/path/to/document.docx');
+// Gibt zurück: "/path/to/document.pdf"
+```
+
+#### An einem benutzerdefinierten Ort speichern
+
+```php
+use Hwkdo\PdfRestLaravel\Facades\PdfRestLaravel;
+
+$path = PdfRestLaravel::convertToPdfAndSave(
+    '/path/to/document.docx',
+    '/custom/output/myfile.pdf'
+);
+// Gibt zurück: "/custom/output/myfile.pdf"
+```
+
+### Fehlerbehandlung
+
+Beide Methoden werfen Exceptions bei Fehlern:
+
+```php
+use Hwkdo\PdfRestLaravel\Facades\PdfRestLaravel;
+use InvalidArgumentException;
+use RuntimeException;
+
+try {
+    $path = PdfRestLaravel::convertToPdfAndSave('/path/to/document.docx');
+    echo "PDF erfolgreich gespeichert: {$path}";
+} catch (InvalidArgumentException $e) {
+    // Datei existiert nicht
+    echo "Fehler: {$e->getMessage()}";
+} catch (RuntimeException $e) {
+    // API-Fehler oder Download-Fehler
+    echo "Fehler: {$e->getMessage()}";
+}
+```
+
+### Unterstützte Dateiformate
+
+Die PDF REST API unterstützt viele Dokumentformate, darunter:
+- Microsoft Office: .docx, .doc, .xlsx, .xls, .pptx, .ppt
+- Bilder: .jpg, .jpeg, .png, .gif, .bmp, .tiff
+- Andere: .html, .txt, und viele weitere
 
 ## Testing
 
